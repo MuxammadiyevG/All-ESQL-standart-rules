@@ -16,7 +16,7 @@ query: |
     AND event.action IN ("updated", "created", "attributes_modified")
   | EVAL severity = "critical"
   | KEEP @timestamp, host.name, file.path, file.hash.sha256, event.action, user.name, severity
-enabled: false
+enabled: true
 tags:
   - system-integrity
 severity: critical

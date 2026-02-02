@@ -17,7 +17,7 @@ query: |
   | WHERE host.name RLIKE ".*(cde|payment|prod).*"
   | EVAL severity = "critical"
   | KEEP @timestamp, host.name, user.name, process.name, process.args, process.executable, severity
-enabled: false
+enabled: true
 tags:
   - system-integrity
 severity: critical

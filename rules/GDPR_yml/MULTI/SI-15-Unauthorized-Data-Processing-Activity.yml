@@ -20,7 +20,7 @@ query: |
   | WHERE activity_count >= 5
   | EVAL severity = "high"
   | KEEP @timestamp, user.name, host.name, process.name, activity_count, severity
-enabled: false
+enabled: true
 tags:
   - system-integrity
 severity: high

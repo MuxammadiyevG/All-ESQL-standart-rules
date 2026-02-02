@@ -16,7 +16,7 @@ query: |
   | WHERE destination.domain NOT IN ("company.com", "company.net")
   | EVAL severity = "medium"
   | KEEP @timestamp, user.name, source.ip, destination.domain, network.bytes, severity
-enabled: false
+enabled: true
 tags:
   - system-integrity
 severity: medium

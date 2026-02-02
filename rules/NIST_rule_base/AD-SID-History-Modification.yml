@@ -19,7 +19,7 @@ query: |
       count() 
     BY host.name, user.name, user.target.name, @timestamp
   | SORT @timestamp DESC
-enabled: false
+enabled: true
 tags:
   - ac-6
 severity: medium

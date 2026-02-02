@@ -22,7 +22,7 @@ query: |
   | WHERE unique_sources >= 3
   | EVAL severity = "high"
   | KEEP @timestamp, user.name, unique_sources, unique_hosts, source_ips, severity
-enabled: false
+enabled: true
 tags:
   - access-control
 severity: high

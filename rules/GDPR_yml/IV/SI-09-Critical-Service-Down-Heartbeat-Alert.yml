@@ -16,7 +16,7 @@ query: |
   | WHERE down_duration >= 300000
   | EVAL severity = "high"
   | KEEP @timestamp, monitor.name, host.name, monitor.status, down_duration, severity
-enabled: false
+enabled: true
 tags:
   - system-integrity
 severity: high

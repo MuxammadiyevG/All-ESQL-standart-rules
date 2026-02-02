@@ -23,7 +23,7 @@ query: |
       process_path = MAX(process.executable) 
     BY host.name, user.name, process.name, @timestamp
   | SORT @timestamp DESC
-enabled: false
+enabled: true
 tags:
   - cm-5
 severity: medium

@@ -17,7 +17,7 @@ query: |
   | WHERE sudo_count >= 1
   | EVAL severity = "medium"
   | KEEP @timestamp, user.name, host.name, process.args, sudo_count, severity
-enabled: false
+enabled: true
 tags:
   - system-integrity
 severity: medium

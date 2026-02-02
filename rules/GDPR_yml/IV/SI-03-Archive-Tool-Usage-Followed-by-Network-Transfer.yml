@@ -22,7 +22,7 @@ query: |
   | WHERE archive_count >= 1 AND network_count >= 1
   | EVAL severity = "critical"
   | KEEP @timestamp, user.name, host.name, archive_count, network_count, total_bytes, severity
-enabled: false
+enabled: true
 tags:
   - system-integrity
 severity: critical

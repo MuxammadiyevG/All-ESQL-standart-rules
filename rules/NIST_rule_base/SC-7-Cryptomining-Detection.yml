@@ -21,7 +21,7 @@ query: |
       traffic_count = COUNT(*) 
     BY host.name, source.ip, @timestamp
   | SORT @timestamp DESC
-enabled: false
+enabled: true
 tags:
   - sc-7
 severity: medium

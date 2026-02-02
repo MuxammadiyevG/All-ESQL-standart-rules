@@ -19,7 +19,7 @@ query: |
     BY host.name, user.name, process.name, @timestamp
   | WHERE file_changes > 50 // 1 ta event ichida ko'p fayl o'zgarishi (adjust threshold if needed)
   | SORT file_changes DESC
-enabled: false
+enabled: true
 tags:
   - si-4
 severity: medium

@@ -15,7 +15,7 @@ query: |
       OR (message RLIKE ".*USB.*mass storage.*" AND event.action == "device-connected")
   | EVAL severity = "medium"
   | KEEP @timestamp, host.name, user.name, event.code, winlog.event_data.DeviceName, severity
-enabled: false
+enabled: true
 tags:
   - system-integrity
 severity: medium

@@ -21,7 +21,7 @@ query: |
   | WHERE attack_count >= 5
   | EVAL severity = "high"
   | KEEP @timestamp, source.ip, host.name, process.name, http.request.headers.user-agent, attack_count, severity
-enabled: false
+enabled: true
 tags:
   - system-integrity
 severity: high

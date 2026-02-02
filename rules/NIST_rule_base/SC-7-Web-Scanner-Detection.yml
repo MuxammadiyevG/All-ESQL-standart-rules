@@ -27,7 +27,7 @@ query: |
     BY host.name, source.ip, @timestamp
   | WHERE scan_count > 5
   | SORT scan_count DESC
-enabled: false
+enabled: true
 tags:
   - sc-7
 severity: medium

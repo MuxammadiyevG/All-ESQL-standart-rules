@@ -19,7 +19,7 @@ query: |
   | WHERE user.name NOT IN ("ansible", "puppet", "chef", "saltstack")
   | EVAL severity = "medium"
   | KEEP @timestamp, host.name, user.name, file.path, event.action, file.hash.sha256, severity
-enabled: false
+enabled: true
 tags:
   - configuration
 severity: medium

@@ -21,7 +21,7 @@ query: |
   | WHERE request_count >= 1
   | EVAL severity = "critical"
   | KEEP @timestamp, source.ip, destination.ip, url.path, urls, request_count, severity
-enabled: false
+enabled: true
 tags:
   - system-communications
 severity: critical

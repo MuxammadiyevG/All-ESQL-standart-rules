@@ -17,7 +17,7 @@ query: |
       OR (process.name == "useradd" AND process.args RLIKE ".*-G (sudo|wheel|admin).*")
   | EVAL severity = "high"
   | KEEP @timestamp, host.name, user.name, event.action, process.name, process.args, severity
-enabled: false
+enabled: true
 tags:
   - access-control
 severity: high

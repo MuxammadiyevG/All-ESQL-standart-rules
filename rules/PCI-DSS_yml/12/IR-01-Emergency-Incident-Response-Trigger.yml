@@ -28,7 +28,7 @@ query: |
   | WHERE critical_signals >= 2
   | EVAL severity = "critical"
   | KEEP @timestamp, host.name, critical_signals, hosts_affected, users_involved, event_types, severity
-enabled: false
+enabled: true
 tags:
   - incident-response
 severity: critical

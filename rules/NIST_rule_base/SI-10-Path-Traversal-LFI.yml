@@ -23,7 +23,7 @@ query: |
       traversal_count = COUNT(*) 
     BY source.ip, url.path, url.query, host.name, @timestamp
   | SORT @timestamp DESC
-enabled: false
+enabled: true
 tags:
   - si-10
 severity: medium

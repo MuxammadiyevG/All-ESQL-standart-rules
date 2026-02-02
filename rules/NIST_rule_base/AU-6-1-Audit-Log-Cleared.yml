@@ -19,7 +19,7 @@ query: |
     OR (winlog.channel == "Security" AND event.code == "1100")   // EventLog xizmati to'xtatildi
   | STATS event_count = COUNT(*) BY host.name, user.name, event.code, event.action, @timestamp
   | SORT @timestamp DESC
-enabled: false
+enabled: true
 tags:
   - au-6(1)
 severity: medium

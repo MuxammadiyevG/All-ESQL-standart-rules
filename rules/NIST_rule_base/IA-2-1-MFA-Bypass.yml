@@ -28,7 +28,7 @@ query: |
       last_logon = MAX(@timestamp) 
     BY user.name, source.ip, @timestamp
   | SORT @timestamp DESC
-enabled: false
+enabled: true
 tags:
   - ia-2(1)
 severity: medium

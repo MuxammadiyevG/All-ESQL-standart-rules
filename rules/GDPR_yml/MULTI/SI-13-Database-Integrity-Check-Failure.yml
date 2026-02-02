@@ -14,7 +14,7 @@ query: |
       OR (process.name IN ("mysqlcheck", "pg_checksums") AND message RLIKE ".*error.*")
   | EVAL severity = "critical"
   | KEEP @timestamp, host.name, message, process.name, severity
-enabled: false
+enabled: true
 tags:
   - system-integrity
 severity: critical

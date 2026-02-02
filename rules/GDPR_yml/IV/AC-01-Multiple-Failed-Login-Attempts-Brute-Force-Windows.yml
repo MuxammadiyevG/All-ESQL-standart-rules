@@ -17,7 +17,7 @@ query: |
   | WHERE failed_attempts >= 5
   | EVAL severity = "medium"
   | KEEP @timestamp, source.ip, user.name, host.name, failed_attempts, severity
-enabled: false
+enabled: true
 tags:
   - access-control
 severity: medium

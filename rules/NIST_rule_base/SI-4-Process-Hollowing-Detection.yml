@@ -19,7 +19,7 @@ query: |
       event_count = COUNT(*) 
     BY host.name, user.name, process.name, process.parent.name, process.command_line, @timestamp
   | SORT @timestamp DESC
-enabled: false
+enabled: true
 tags:
   - si-4
 severity: medium

@@ -15,7 +15,7 @@ query: |
       OR (process.name == "auditctl" AND process.args RLIKE ".* -D .*")
   | EVAL severity = "critical"
   | KEEP @timestamp, host.name, user.name, file.path, process.name, process.args, event.action, severity
-enabled: false
+enabled: true
 tags:
   - audit
 severity: critical

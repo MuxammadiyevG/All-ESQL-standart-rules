@@ -19,7 +19,7 @@ query: |
     BY host.name, user.name, process.command_line, @timestamp
   | WHERE NOT user.name == "root" // Faqat root bo'lmagan foydalanuvchilar shubhali
   | SORT @timestamp DESC
-enabled: false
+enabled: true
 tags:
   - si-4
 severity: medium

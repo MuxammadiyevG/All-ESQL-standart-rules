@@ -20,7 +20,7 @@ query: |
     BY user.name, source.ip, @timestamp
   | WHERE ticket_count > 10 // Qisqa vaqtda ko'p bilet so'ralishi
   | SORT @timestamp DESC
-enabled: false
+enabled: true
 tags:
   - ia-2
 severity: medium

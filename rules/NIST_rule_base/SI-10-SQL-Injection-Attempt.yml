@@ -26,7 +26,7 @@ query: |
       attack_count = COUNT(*) 
     BY host.name, source.ip, @timestamp
   | SORT @timestamp DESC
-enabled: false
+enabled: true
 tags:
   - si-10
 severity: medium

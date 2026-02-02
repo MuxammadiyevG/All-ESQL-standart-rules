@@ -21,7 +21,7 @@ query: |
   | WHERE host.name RLIKE ".*(cde|payment).*"
   | EVAL severity = "critical"
   | KEEP @timestamp, user.name, source.ip, host.name, event.code, winlog.event_data.LogonType, severity
-enabled: false
+enabled: true
 tags:
   - identification-authentication
 severity: critical

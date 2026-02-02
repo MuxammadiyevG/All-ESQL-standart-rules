@@ -16,7 +16,7 @@ query: |
   | WHERE unique_users >= 5
   | EVAL severity = "medium"
   | KEEP @timestamp, source.ip, host.name, unique_users, severity
-enabled: false
+enabled: true
 tags:
   - audit
 severity: medium

@@ -21,7 +21,7 @@ query: |
   | WHERE connection_count >= 1
   | EVAL severity = "critical"
   | KEEP @timestamp, source.ip, destination.domain, destination.ip, network.protocol, protocols, connection_count, severity
-enabled: false
+enabled: true
 tags:
   - system-communications
 severity: critical

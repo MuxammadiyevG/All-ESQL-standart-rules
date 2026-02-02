@@ -23,7 +23,7 @@ query: |
       attack_count = COUNT(*) 
     BY host.name, user.name, message, source.ip, @timestamp
   | SORT @timestamp DESC
-enabled: false
+enabled: true
 tags:
   - ac-6 - [ultimate version]
 severity: medium

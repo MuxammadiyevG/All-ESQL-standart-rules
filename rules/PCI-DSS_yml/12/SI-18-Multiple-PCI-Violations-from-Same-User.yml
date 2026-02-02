@@ -27,7 +27,7 @@ query: |
   | WHERE violation_types >= 3 OR total_violations >= 10
   | EVAL severity = "high"
   | KEEP @timestamp, user.name, host.name, violation_types, total_violations, severity
-enabled: false
+enabled: true
 tags:
   - system-integrity
 severity: high

@@ -18,7 +18,7 @@ query: |
     AND user.name NOT IN ("ansible", "puppet", "sccm-agent")
   | EVAL severity = "medium"
   | KEEP @timestamp, host.name, user.name, process.name, process.args, event.code, severity
-enabled: false
+enabled: true
 tags:
   - configuration
 severity: medium

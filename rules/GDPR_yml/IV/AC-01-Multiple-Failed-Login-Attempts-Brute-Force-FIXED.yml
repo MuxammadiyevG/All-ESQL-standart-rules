@@ -1,0 +1,28 @@
+name: Multiple Failed Login Attempts (Brute Force) - FIXED
+description: |
+  Detects brute force login attempts by counting failed authentication events from the same source IP within 5 minutes.
+  FIXED VERSION: Uses actual Elasticsearch field names (winlog.event_data.*)
+type: esql
+params: '{}'
+schedule_interval: 5m
+index:
+  - winlogbeat-*
+query_language: esql
+query: |
+  FROM winlogbeat-*
+  | WHERE @timestamp >= NOW() - 5 minutes
+  | WHERE event.code == "4625"
+  | STATS failed_attempts = COUNT(*) BY winlog.event_data.IpAddress, winlog.event_data.TargetUserName, host.name
+  | WHERE failed_attempts >= 3
+  | EVAL severity = "medium"
+enabled: true
+tags:
+  - access-control
+  - brute-force
+severity: medium
+risk_score: 60
+mitre_attack: {}
+nist: ["AC-7", "AU-2"]
+gdpr: ["IV.32.1.b"]
+pci-dss: []
+hipaa: []

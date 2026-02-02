@@ -16,7 +16,7 @@ query: |
   | STATS attempt_count = COUNT(*) BY user.name, source.ip, host.name
   | EVAL severity = "high"
   | KEEP @timestamp, user.name, source.ip, host.name, attempt_count, severity
-enabled: false
+enabled: true
 tags:
   - identification-authentication
 severity: high

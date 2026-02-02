@@ -15,7 +15,7 @@ query: |
   | WHERE disk_used_pct >= 90
   | EVAL severity = "high"
   | KEEP @timestamp, host.name, system.filesystem.mount_point, disk_used_pct, severity
-enabled: false
+enabled: true
 tags:
   - audit
 severity: high

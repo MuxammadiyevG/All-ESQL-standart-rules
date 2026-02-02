@@ -20,7 +20,7 @@ query: |
   | WHERE days_since_last > 7
   | EVAL severity = "medium"
   | KEEP @timestamp, host.name, destruction_events, last_log, days_since_last, severity
-enabled: false
+enabled: true
 tags:
   - audit
 severity: medium

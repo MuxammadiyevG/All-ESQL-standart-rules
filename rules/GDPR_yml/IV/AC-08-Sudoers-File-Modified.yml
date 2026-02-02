@@ -16,7 +16,7 @@ query: |
          OR event.type == "change")
   | EVAL severity = "high"
   | KEEP @timestamp, host.name, user.name, file.path, event.action, process.name, severity
-enabled: false
+enabled: true
 tags:
   - access-control
 severity: high

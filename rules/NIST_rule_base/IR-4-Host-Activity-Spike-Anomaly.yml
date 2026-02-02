@@ -18,7 +18,7 @@ query: |
     BY host.name, @timestamp
   | WHERE log_count > 10000 
   | SORT log_count DESC
-enabled: false
+enabled: true
 tags:
   - ir-4
 severity: medium

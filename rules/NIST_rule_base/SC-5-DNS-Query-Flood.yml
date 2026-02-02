@@ -18,7 +18,7 @@ query: |
     BY source.ip, host.name
   | WHERE query_count > 1000 // 1 ta tahlil vaqti ichida 1000 tadan ko'p so'rov
   | SORT query_count DESC
-enabled: false
+enabled: true
 tags:
   - sc-5
 severity: medium

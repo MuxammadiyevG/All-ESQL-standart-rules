@@ -1,0 +1,27 @@
+name: Windows Event Log Cleared - FIXED
+description: |
+  Detects when Windows Security event log is cleared, a classic anti-forensics technique.
+  FIXED VERSION: Uses actual Elasticsearch field names
+type: esql
+params: '{}'
+schedule_interval: 5m
+index:
+  - winlogbeat-*
+query_language: esql
+query: |
+  FROM winlogbeat-*
+  | WHERE @timestamp >= NOW() - 5 minutes
+  | WHERE event.code == "1102"
+  | EVAL severity = "critical"
+  | KEEP @timestamp, host.name, winlog.event_data.SubjectUserName, winlog.channel, severity
+enabled: true
+tags:
+  - audit
+  - anti-forensics
+severity: critical
+risk_score: 90
+mitre_attack: {}
+nist: ["AU-9"]
+gdpr: ["II.5.1.f", "IV.32.1", "IV.33"]
+pci-dss: []
+hipaa: []

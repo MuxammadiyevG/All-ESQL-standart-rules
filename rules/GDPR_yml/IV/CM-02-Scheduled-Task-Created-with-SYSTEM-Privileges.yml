@@ -15,7 +15,7 @@ query: |
       OR winlog.event_data.TaskContent RLIKE ".*<UserId>SYSTEM</UserId>.*"
   | EVAL severity = "high"
   | KEEP @timestamp, host.name, winlog.event_data.TaskName, winlog.event_data.SubjectUserName, winlog.event_data.TaskContent, severity
-enabled: false
+enabled: true
 tags:
   - configuration
 severity: high

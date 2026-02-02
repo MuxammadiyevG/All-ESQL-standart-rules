@@ -24,7 +24,7 @@ query: |
   | WHERE rule_count >= 3
   | EVAL severity = "critical"
   | KEEP @timestamp, user.name, host.name, rule_count, event_categories, severity
-enabled: false
+enabled: true
 tags:
   - incident-response
 severity: critical

@@ -20,7 +20,7 @@ query: |
   | WHERE failures >= 3 AND successes >= 1
   | EVAL severity = "high"
   | KEEP max_time, source.ip, user.name, host.name, failures, successes, severity
-enabled: false
+enabled: true
 tags:
   - access-control
 severity: high

@@ -15,7 +15,7 @@ query: |
       OR process.args RLIKE ".*(SELECT.*FROM|COPY.*TO|BACKUP DATABASE).*"
   | EVAL severity = "high"
   | KEEP @timestamp, host.name, user.name, process.name, process.args, severity
-enabled: false
+enabled: true
 tags:
   - system-communications
 severity: high

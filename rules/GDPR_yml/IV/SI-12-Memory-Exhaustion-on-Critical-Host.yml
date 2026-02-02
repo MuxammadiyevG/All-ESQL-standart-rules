@@ -15,7 +15,7 @@ query: |
   | EVAL memory_used_pct = system.memory.actual.used.pct * 100
   | EVAL severity = "high"
   | KEEP @timestamp, host.name, memory_used_pct, system.memory.actual.used.bytes, severity
-enabled: false
+enabled: true
 tags:
   - system-integrity
 severity: high

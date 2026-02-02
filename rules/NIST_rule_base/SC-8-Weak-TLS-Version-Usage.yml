@@ -20,7 +20,7 @@ query: |
       usage_count = COUNT(*) 
     BY host.name, source.ip, tls.version, @timestamp
   | SORT @timestamp DESC
-enabled: false
+enabled: true
 tags:
   - sc-8
 severity: medium

@@ -23,7 +23,7 @@ query: |
       attempt_count = COUNT(*) 
     BY host.name, user.name, @timestamp
   | SORT @timestamp DESC
-enabled: false
+enabled: true
 tags:
   - si-4
 severity: medium

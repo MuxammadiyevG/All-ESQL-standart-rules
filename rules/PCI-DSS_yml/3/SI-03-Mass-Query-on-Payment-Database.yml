@@ -18,7 +18,7 @@ query: |
   | WHERE query_count >= 5
   | EVAL severity = "high"
   | KEEP @timestamp, user.name, host.name, query_count, message, severity
-enabled: false
+enabled: true
 tags:
   - system-integrity
 severity: high

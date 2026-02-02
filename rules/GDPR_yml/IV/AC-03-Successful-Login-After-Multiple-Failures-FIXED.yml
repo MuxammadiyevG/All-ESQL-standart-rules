@@ -1,0 +1,35 @@
+name: Successful Login After Multiple Failures - FIXED
+description: |
+  Detects successful authentication following 3+ failed attempts within 10 minutes, indicating potential brute force success.
+  FIXED VERSION: Uses actual Elasticsearch field names
+type: esql
+params: '{}'
+schedule_interval: 10m
+index:
+  - winlogbeat-*
+query_language: esql
+query: |
+  FROM winlogbeat-*
+  | WHERE @timestamp >= NOW() - 10 minutes
+  | WHERE event.code IN ("4624", "4625")
+  | EVAL 
+      is_failure = CASE(event.code == "4625", 1, 0),
+      is_success = CASE(event.code == "4624", 1, 0)
+  | STATS 
+      failures = SUM(is_failure),
+      successes = SUM(is_success),
+      max_time = MAX(@timestamp)
+    BY winlog.event_data.IpAddress, winlog.event_data.TargetUserName, host.name
+  | WHERE failures >= 3 AND successes >= 1
+  | EVAL severity = "high"
+enabled: true
+tags:
+  - access-control
+  - brute-force-success
+severity: high
+risk_score: 75
+mitre_attack: {}
+nist: ["AC-7", "AU-2"]
+gdpr: ["IV.32.1.b", "IV.33"]
+pci-dss: []
+hipaa: []

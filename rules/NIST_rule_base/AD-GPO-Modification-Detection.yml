@@ -21,7 +21,7 @@ query: |
       gpo_mods = COUNT(*) 
     BY host.name, user.name, user.target.name, message, @timestamp
   | SORT @timestamp DESC
-enabled: false
+enabled: true
 tags:
   - ac-16
 severity: medium

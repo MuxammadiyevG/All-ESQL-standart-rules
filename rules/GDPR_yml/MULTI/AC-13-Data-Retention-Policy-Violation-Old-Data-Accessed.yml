@@ -17,7 +17,7 @@ query: |
   | WHERE file_age_days > 2555
   | EVAL severity = "medium"
   | KEEP @timestamp, user.name, file.path, file.created, file_age_days, severity
-enabled: false
+enabled: true
 tags:
   - access-control
 severity: medium

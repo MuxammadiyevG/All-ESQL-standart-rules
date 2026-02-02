@@ -17,7 +17,7 @@ query: |
   | WHERE unique_destinations >= 5
   | EVAL severity = "high"
   | KEEP @timestamp, user.name, source.ip, unique_destinations, severity
-enabled: false
+enabled: true
 tags:
   - incident-response
 severity: high

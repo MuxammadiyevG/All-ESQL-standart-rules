@@ -20,7 +20,7 @@ query: |
   | WHERE packet_count >= 5
   | EVAL severity = "high"
   | KEEP @timestamp, source.ip, destination.ip, destination.port, network.protocol, protocols_seen, packet_count, severity
-enabled: false
+enabled: true
 tags:
   - system-communications
 severity: high

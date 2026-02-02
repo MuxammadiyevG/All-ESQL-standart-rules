@@ -22,7 +22,7 @@ query: |
     BY host.name, source.ip, @timestamp
   | WHERE traffic_count > 10
   | SORT traffic_count DESC
-enabled: false
+enabled: true
 tags:
   - sc-7(3)
 severity: medium

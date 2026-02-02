@@ -22,7 +22,7 @@ query: |
   | WHERE session_duration >= 15 AND activity_count <= 3
   | EVAL severity = "medium"
   | KEEP session_start, last_activity, user.name, host.name, session_duration, activity_count, severity
-enabled: false
+enabled: true
 tags:
   - system-integrity
 severity: medium

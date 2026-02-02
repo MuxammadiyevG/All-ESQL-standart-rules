@@ -28,7 +28,7 @@ query: |
   | EVAL risk_level = CASE(ntlm_usage > 10, "CRITICAL (NTLM Relay)", "HIGH")
   | SORT latest_event DESC
   | LIMIT 20
-enabled: false
+enabled: true
 tags:
   - ac-2(j) - [ultimate version]
 severity: medium

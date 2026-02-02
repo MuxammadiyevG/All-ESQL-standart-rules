@@ -24,7 +24,7 @@ query: |
     BY host.name, source.ip, @timestamp
   | WHERE long_query_count > 10
   | SORT long_query_count DESC
-enabled: false
+enabled: true
 tags:
   - sc-8(1)
 severity: medium

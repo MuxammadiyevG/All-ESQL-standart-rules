@@ -21,7 +21,7 @@ query: |
       usage_count = COUNT(*) 
     BY source.ip, @timestamp
   | SORT @timestamp DESC
-enabled: false
+enabled: true
 tags:
   - ia-8(4)
 severity: medium

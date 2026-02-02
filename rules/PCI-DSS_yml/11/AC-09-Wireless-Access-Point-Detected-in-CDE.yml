@@ -20,7 +20,7 @@ query: |
   | WHERE ap_detections >= 1
   | EVAL severity = "critical"
   | KEEP @timestamp, host.name, message, ap_detections, severity
-enabled: false
+enabled: true
 tags:
   - access-control
 severity: critical

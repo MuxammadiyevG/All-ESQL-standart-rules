@@ -15,7 +15,7 @@ query: |
       OR (message RLIKE ".*(system.*reboot|shutdown -r).*" AND event.action == "shutdown")
   | EVAL severity = "medium"
   | KEEP @timestamp, host.name, user.name, event.code, winlog.event_data.Reason, message, severity
-enabled: false
+enabled: true
 tags:
   - system-integrity
 severity: medium

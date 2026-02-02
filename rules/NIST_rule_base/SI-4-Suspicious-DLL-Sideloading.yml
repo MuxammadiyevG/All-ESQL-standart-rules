@@ -24,7 +24,7 @@ query: |
       load_count = COUNT(*) 
     BY host.name, user.name, process.name, dll_path, @timestamp
   | SORT @timestamp DESC
-enabled: false
+enabled: true
 tags:
   - si-4
 severity: medium

@@ -18,7 +18,7 @@ query: |
       event_count = COUNT(*) 
     BY host.name, user.name, source.ip, @timestamp
   | SORT @timestamp DESC
-enabled: false
+enabled: true
 tags:
   - ir-4
 severity: medium

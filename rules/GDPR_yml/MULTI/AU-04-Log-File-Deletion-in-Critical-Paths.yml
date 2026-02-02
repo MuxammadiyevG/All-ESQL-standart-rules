@@ -15,7 +15,7 @@ query: |
     AND (file.path RLIKE ".*/var/log/.*" OR file.path RLIKE ".*Windows.*winevt.*Logs.*")
   | EVAL severity = "high"
   | KEEP @timestamp, host.name, user.name, file.path, process.name, event.action, severity
-enabled: false
+enabled: true
 tags:
   - audit
 severity: high

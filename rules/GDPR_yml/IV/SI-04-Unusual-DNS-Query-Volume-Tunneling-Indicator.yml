@@ -18,7 +18,7 @@ query: |
   | WHERE dns_count >= 100
   | EVAL severity = "high"
   | KEEP @timestamp, source.ip, host.name, dns_count, unique_domains, severity
-enabled: false
+enabled: true
 tags:
   - system-integrity
 severity: high

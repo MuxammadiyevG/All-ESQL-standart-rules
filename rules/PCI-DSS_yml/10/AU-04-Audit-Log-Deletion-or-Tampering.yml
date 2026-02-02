@@ -18,7 +18,7 @@ query: |
     AND host.name RLIKE ".*(cde|payment|prod).*"
   | EVAL severity = "critical"
   | KEEP @timestamp, host.name, user.name, file.path, event.code, event.action, message, severity
-enabled: false
+enabled: true
 tags:
   - audit
 severity: critical

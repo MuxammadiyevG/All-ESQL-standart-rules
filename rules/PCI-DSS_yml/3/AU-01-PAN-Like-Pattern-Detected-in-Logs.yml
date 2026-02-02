@@ -18,7 +18,7 @@ query: |
   | WHERE pan_occurrences >= 1
   | EVAL severity = "critical"
   | KEEP @timestamp, host.name, log.file.path, pan_occurrences, severity
-enabled: false
+enabled: true
 tags:
   - audit
 severity: critical

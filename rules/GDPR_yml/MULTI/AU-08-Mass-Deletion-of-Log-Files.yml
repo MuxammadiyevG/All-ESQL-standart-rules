@@ -17,7 +17,7 @@ query: |
   | WHERE deleted_count >= 10
   | EVAL severity = "critical"
   | KEEP @timestamp, user.name, host.name, deleted_count, severity
-enabled: false
+enabled: true
 tags:
   - audit
 severity: critical

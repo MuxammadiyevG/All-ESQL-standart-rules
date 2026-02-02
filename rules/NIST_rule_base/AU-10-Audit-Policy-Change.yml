@@ -19,7 +19,7 @@ query: |
       change_count = COUNT(*) 
     BY host.name, user.name, process.name, process.command_line, @timestamp
   | SORT @timestamp DESC
-enabled: false
+enabled: true
 tags:
   - au-10
 severity: medium

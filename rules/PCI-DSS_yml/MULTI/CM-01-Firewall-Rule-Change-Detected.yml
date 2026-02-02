@@ -19,7 +19,7 @@ query: |
   | WHERE host.name RLIKE ".*(cde|payment|firewall).*"
   | EVAL severity = "high"
   | KEEP @timestamp, host.name, user.name, process.name, process.args, file.path, event.code, severity
-enabled: false
+enabled: true
 tags:
   - configuration
 severity: high

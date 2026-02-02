@@ -21,7 +21,7 @@ query: |
   | WHERE LENGTH(countries) >= 2 AND time_span < 3600000
   | EVAL severity = "high"
   | KEEP @timestamp, user.name, countries, locations, time_span, severity
-enabled: false
+enabled: true
 tags:
   - access-control
 severity: high

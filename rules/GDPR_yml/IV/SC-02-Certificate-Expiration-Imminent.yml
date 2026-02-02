@@ -16,7 +16,7 @@ query: |
   | WHERE days_until_expiry <= 7 AND days_until_expiry >= 0
   | EVAL severity = "medium"
   | KEEP @timestamp, tls.server.x509.subject.common_name, tls.server.x509.not_after, days_until_expiry, destination.ip, severity
-enabled: false
+enabled: true
 tags:
   - system-communications
 severity: medium

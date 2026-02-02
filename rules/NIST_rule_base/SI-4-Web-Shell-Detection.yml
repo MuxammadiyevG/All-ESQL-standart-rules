@@ -19,7 +19,7 @@ query: |
       count() 
     BY host.name, user.name, process.parent.name, process.name, process.command_line, @timestamp
   | SORT @timestamp DESC
-enabled: false
+enabled: true
 tags:
   - si-4
 severity: medium

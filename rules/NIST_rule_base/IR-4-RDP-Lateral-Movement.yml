@@ -25,7 +25,7 @@ query: |
       target_host = MAX(host.name)
     BY user.name, source.ip, @timestamp
   | SORT @timestamp DESC
-enabled: false
+enabled: true
 tags:
   - ir-4
 severity: medium

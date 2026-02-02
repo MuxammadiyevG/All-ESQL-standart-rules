@@ -15,7 +15,7 @@ query: |
   | WHERE total_bytes >= 104857600
   | EVAL severity = "high"
   | KEEP @timestamp, source.ip, destination.ip, destination.geo.country_name, host.name, total_bytes, severity
-enabled: false
+enabled: true
 tags:
   - system-integrity
 severity: high

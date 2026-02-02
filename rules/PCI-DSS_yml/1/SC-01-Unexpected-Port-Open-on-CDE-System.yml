@@ -22,7 +22,7 @@ query: |
   | WHERE connection_count >= 3
   | EVAL severity = "high"
   | KEEP @timestamp, host.name, destination.port, network.protocol, connection_count, unique_sources, severity
-enabled: false
+enabled: true
 tags:
   - system-communications
 severity: high

@@ -15,7 +15,7 @@ query: |
     AND event.action IN ("modified", "created", "deleted")
   | EVAL severity = "medium"
   | KEEP @timestamp, host.name, user.name, file.path, event.action, process.name, severity
-enabled: false
+enabled: true
 tags:
   - audit
 severity: medium

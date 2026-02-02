@@ -17,7 +17,7 @@ query: |
   | WHERE down_count >= 1
   | EVAL severity = "high"
   | KEEP @timestamp, host.name, monitor.name, monitor.status, down_count, severity
-enabled: false
+enabled: true
 tags:
   - audit
 severity: high

@@ -20,7 +20,7 @@ query: |
       download_command = MAX(process.command_line) 
     BY host.name, user.name, process.name, @timestamp
   | SORT @timestamp DESC
-enabled: false
+enabled: true
 tags:
   - si-4
 severity: medium

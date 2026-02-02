@@ -21,7 +21,7 @@ query: |
       action_count = COUNT(*) 
     BY host.name, user.name, file.path, event.type, process.name, @timestamp
   | SORT @timestamp DESC
-enabled: false
+enabled: true
 tags:
   - si-7
 severity: medium

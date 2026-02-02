@@ -19,7 +19,7 @@ query: |
   | WHERE (hour < 7 OR hour >= 19) OR (day_of_week IN (6, 7))
   | EVAL severity = "medium"
   | KEEP @timestamp, user.name, host.name, message, hour, day_of_week, severity
-enabled: false
+enabled: true
 tags:
   - access-control
 severity: medium

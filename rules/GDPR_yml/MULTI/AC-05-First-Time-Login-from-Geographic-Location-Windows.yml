@@ -17,7 +17,7 @@ query: |
   | WHERE LENGTH(countries) >= 2
   | EVAL severity = "medium"
   | KEEP @timestamp, user.name, source.ip, source.geo.country_name, countries, severity
-enabled: false
+enabled: true
 tags:
   - access-control
 severity: medium

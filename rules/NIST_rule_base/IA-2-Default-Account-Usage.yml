@@ -19,7 +19,7 @@ query: |
       logon_count = COUNT(*) 
     BY host.name, user.name, source.ip, @timestamp
   | SORT @timestamp DESC
-enabled: false
+enabled: true
 tags:
   - ia-2
 severity: medium

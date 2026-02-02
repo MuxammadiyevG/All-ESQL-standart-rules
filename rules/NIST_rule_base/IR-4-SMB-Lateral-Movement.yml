@@ -22,7 +22,7 @@ query: |
       execution_count = COUNT(*) 
     BY host.name, user.name, process.name, process.command_line, @timestamp
   | SORT @timestamp DESC
-enabled: false
+enabled: true
 tags:
   - ir-4
 severity: medium

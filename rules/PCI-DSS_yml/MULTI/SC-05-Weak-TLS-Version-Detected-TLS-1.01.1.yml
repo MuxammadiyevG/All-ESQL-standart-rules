@@ -20,7 +20,7 @@ query: |
   | WHERE connection_count >= 1
   | EVAL severity = "high"
   | KEEP @timestamp, source.ip, destination.ip, tls.version, tls_versions, connection_count, severity
-enabled: false
+enabled: true
 tags:
   - system-communications
 severity: high

@@ -19,7 +19,7 @@ query: |
       event_count = COUNT(*)
     BY host.name, user.name, service_name, @timestamp
   | SORT @timestamp DESC
-enabled: false
+enabled: true
 tags:
   - si-3
 severity: medium

@@ -15,7 +15,7 @@ query: |
       OR winlog.event_data.ServiceName RLIKE ".*(update|defender|chrome|svchost).*"
   | EVAL severity = "high"
   | KEEP @timestamp, host.name, winlog.event_data.ServiceName, winlog.event_data.ImagePath, winlog.event_data.ServiceType, user.name, severity
-enabled: false
+enabled: true
 tags:
   - configuration
 severity: high

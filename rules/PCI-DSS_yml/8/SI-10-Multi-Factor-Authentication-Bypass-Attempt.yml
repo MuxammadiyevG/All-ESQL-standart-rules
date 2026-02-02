@@ -21,7 +21,7 @@ query: |
   | WHERE source.ip NOT RLIKE "^10\\.|^172\\.16\\.|^192\\.168\\."
   | EVAL severity = "critical"
   | KEEP @timestamp, user.name, source.ip, host.name, event.code, winlog.event_data.LogonType, severity
-enabled: false
+enabled: true
 tags:
   - system-integrity
 severity: critical

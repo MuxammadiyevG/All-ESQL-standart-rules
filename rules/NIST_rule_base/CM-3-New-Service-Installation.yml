@@ -18,7 +18,7 @@ query: |
       service_name = MAX(winlog.event_data.ServiceName) 
     BY host.name, user.name, @timestamp
   | SORT @timestamp DESC
-enabled: false
+enabled: true
 tags:
   - cm-3
 severity: medium

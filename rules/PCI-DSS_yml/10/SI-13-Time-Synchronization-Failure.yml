@@ -18,7 +18,7 @@ query: |
   | WHERE sync_failures >= 3
   | EVAL severity = "medium"
   | KEEP @timestamp, host.name, sync_failures, message, severity
-enabled: false
+enabled: true
 tags:
   - system-integrity
 severity: medium

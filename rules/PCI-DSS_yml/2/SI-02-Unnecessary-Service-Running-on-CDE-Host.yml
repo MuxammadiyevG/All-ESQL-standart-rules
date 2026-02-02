@@ -21,7 +21,7 @@ query: |
   | WHERE process_count >= 3
   | EVAL severity = "medium"
   | KEEP @timestamp, host.name, services, process_count, severity
-enabled: false
+enabled: true
 tags:
   - system-integrity
 severity: medium

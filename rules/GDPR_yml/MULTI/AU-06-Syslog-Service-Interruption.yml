@@ -15,7 +15,7 @@ query: |
           OR process.args RLIKE ".*(systemctl stop rsyslog|service rsyslog stop).*")
   | EVAL severity = "high"
   | KEEP @timestamp, host.name, user.name, process.name, process.args, message, severity
-enabled: false
+enabled: true
 tags:
   - audit
 severity: high

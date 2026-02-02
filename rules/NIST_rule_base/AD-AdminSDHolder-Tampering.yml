@@ -18,7 +18,7 @@ query: |
       tamper_count = COUNT(*) 
     BY host.name, user.name, user.target.name, message, @timestamp
   | SORT @timestamp DESC
-enabled: false
+enabled: true
 tags:
   - ac-6
 severity: medium

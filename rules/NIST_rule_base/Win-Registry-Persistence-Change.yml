@@ -23,7 +23,7 @@ query: |
       mod_count = COUNT(*) 
     BY host.name, user.name, reg_path, @timestamp
   | SORT @timestamp DESC
-enabled: false
+enabled: true
 tags:
   - si-4
 severity: medium

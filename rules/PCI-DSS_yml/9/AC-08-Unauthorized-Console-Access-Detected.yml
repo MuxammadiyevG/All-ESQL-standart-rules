@@ -19,7 +19,7 @@ query: |
     AND user.name NOT IN ("root", "administrator", "console-admin")
   | EVAL severity = "high"
   | KEEP @timestamp, user.name, host.name, event.code, winlog.event_data.LogonType, message, severity
-enabled: false
+enabled: true
 tags:
   - access-control
 severity: high

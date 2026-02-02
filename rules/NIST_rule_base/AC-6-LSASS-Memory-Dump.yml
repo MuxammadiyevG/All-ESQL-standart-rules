@@ -19,7 +19,7 @@ query: |
       access_count = COUNT(*) 
     BY host.name, user.name, process.name, @timestamp
   | SORT @timestamp DESC
-enabled: false
+enabled: true
 tags:
   - ac-6
 severity: medium

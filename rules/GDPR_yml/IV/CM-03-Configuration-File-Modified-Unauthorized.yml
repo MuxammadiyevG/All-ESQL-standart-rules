@@ -16,7 +16,7 @@ query: |
     AND event.action IN ("updated", "created")
   | EVAL severity = "high"
   | KEEP @timestamp, host.name, user.name, file.path, event.action, file.hash.sha256, severity
-enabled: false
+enabled: true
 tags:
   - configuration
 severity: high

@@ -21,7 +21,7 @@ query: |
   | WHERE unique_ports >= 10
   | EVAL severity = "medium"
   | KEEP @timestamp, source.ip, destination.ip, host.name, unique_ports, port_list, severity
-enabled: false
+enabled: true
 tags:
   - system-integrity
 severity: medium

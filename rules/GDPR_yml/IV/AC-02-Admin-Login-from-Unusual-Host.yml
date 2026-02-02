@@ -17,7 +17,7 @@ query: |
   | STATS current_hosts = VALUES(host.name) BY user.name, source.ip
   | EVAL severity = "high"
   | KEEP @timestamp, user.name, source.ip, current_hosts, severity
-enabled: false
+enabled: true
 tags:
   - access-control
 severity: high

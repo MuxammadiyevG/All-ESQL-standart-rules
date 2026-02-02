@@ -18,7 +18,7 @@ query: |
   | WHERE file.path NOT RLIKE ".*(Program Files|application|bin).*"
   | EVAL severity = "high"
   | KEEP @timestamp, host.name, user.name, file.path, file.hash.sha256, event.action, severity
-enabled: false
+enabled: true
 tags:
   - system-integrity
 severity: high

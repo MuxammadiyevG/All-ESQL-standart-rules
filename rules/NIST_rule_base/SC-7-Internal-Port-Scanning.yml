@@ -22,7 +22,7 @@ query: |
     BY source.ip, host.name
   | WHERE total_connections > 50 
   | SORT total_connections DESC
-enabled: false
+enabled: true
 tags:
   - sc-7
 severity: medium

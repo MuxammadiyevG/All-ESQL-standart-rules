@@ -19,7 +19,7 @@ query: |
   | WHERE review_sessions >= 1
   | EVAL severity = "low"
   | KEEP @timestamp, user.name, review_sessions, severity
-enabled: false
+enabled: true
 tags:
   - audit
 severity: low

@@ -22,7 +22,7 @@ query: |
     BY source.ip, destination.ip, host.name
   | WHERE event_count > 1000 
   | SORT event_count DESC
-enabled: false
+enabled: true
 tags:
   - sc-7
 severity: medium

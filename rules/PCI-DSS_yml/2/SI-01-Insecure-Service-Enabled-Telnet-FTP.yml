@@ -21,7 +21,7 @@ query: |
   | WHERE connection_count >= 1
   | EVAL severity = "high"
   | KEEP @timestamp, host.name, destination.port, network.protocol, connection_count, unique_clients, severity
-enabled: false
+enabled: true
 tags:
   - system-integrity
 severity: high

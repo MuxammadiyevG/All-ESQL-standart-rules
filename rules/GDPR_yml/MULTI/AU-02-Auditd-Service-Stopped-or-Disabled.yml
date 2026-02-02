@@ -16,7 +16,7 @@ query: |
           OR event.action == "stopped-service" AND process.name RLIKE ".*audit.*")
   | EVAL severity = "critical"
   | KEEP @timestamp, host.name, user.name, process.name, process.args, message, severity
-enabled: false
+enabled: true
 tags:
   - audit
 severity: critical

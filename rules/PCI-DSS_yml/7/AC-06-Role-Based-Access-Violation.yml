@@ -18,7 +18,7 @@ query: |
   | WHERE host.name RLIKE ".*(cde|payment).*"
   | EVAL severity = "medium"
   | KEEP @timestamp, host.name, user.name, winlog.event_data.MemberName, winlog.event_data.TargetUserName, process.args, event.code, severity
-enabled: false
+enabled: true
 tags:
   - access-control
 severity: medium
