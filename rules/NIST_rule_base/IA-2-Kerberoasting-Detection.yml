@@ -1,0 +1,35 @@
+﻿# Example detection rule for zip import: one rule per file.
+# Pack these .yml/.json files into a .zip and POST to /api/v1/detection-rules/import
+
+name: Kerberoasting hujumi aniqlanishi
+description: |
+  Kerberos servis biletlarining (TGS) shubhali tarzda ko'p so'ralishini aniqlaydi.
+type: esql
+params: '{}'
+schedule_interval: 5m
+index:
+  - winlogbeat-*
+query_language: esql
+query: |
+  FROM winlogbeat-*
+  | WHERE event.code == "4769" // A Kerberos service ticket was requested
+    AND (winlog.event_data.TicketEncryptionType == "0x17" OR winlog.event_data.TicketOptions LIKE "*0x40810000*") // RC4 encryption or specific options
+    AND NOT user.name LIKE "*$"
+  | STATS 
+      ticket_count = COUNT(*) 
+    BY user.name, source.ip, @timestamp
+  | WHERE ticket_count > 10 // Qisqa vaqtda ko'p bilet so'ralishi
+  | SORT @timestamp DESC
+enabled: false
+tags:
+  - ia-2
+severity: medium
+risk_score: 50
+# MITRE ATT&CK: tactic external_id -> technique external_id -> [subtechnique external_ids]
+mitre_attack:
+  TA0006:   # Credential Access
+    T1558.003: []   # Steal or Forge Kerberos Tickets
+nist: ["IA-2"]
+gdpr: ["II.E.2", "IV.A.9", "V.D.2"]
+pci-dss: ["8.1.1", "8.2.1", "8.5"]
+hipaa: ["164.312.a.2.i", "164.312.d"]

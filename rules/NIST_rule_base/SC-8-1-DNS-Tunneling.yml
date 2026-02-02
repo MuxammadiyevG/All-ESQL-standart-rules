@@ -1,0 +1,39 @@
+﻿# Example detection rule for zip import: one rule per file.
+# Pack these .yml/.json files into a .zip and POST to /api/v1/detection-rules/import
+
+name: Ehtimoliy DNS Tunneling xavfi
+description: |
+  DNS so'rovlaridagi anomal uzunlikdagi doman ismlarini aniqlaydi.
+type: esql
+params: '{}'
+schedule_interval: 5m
+index:
+  - winlogbeat-*
+  - auditbeat-*
+  - filebeat-*
+  - packetbeat-*
+query_language: esql
+query: |
+  FROM winlogbeat-*, auditbeat-*, filebeat-*, packetbeat-*
+  | WHERE dns.question.name IS NOT NULL
+  | EVAL domain_len = LENGTH(dns.question.name)
+  | WHERE domain_len > 100
+  | STATS 
+      avg_len = AVG(domain_len), 
+      long_query_count = COUNT(*)
+    BY host.name, source.ip, @timestamp
+  | WHERE long_query_count > 10
+  | SORT long_query_count DESC
+enabled: false
+tags:
+  - sc-8(1)
+severity: medium
+risk_score: 50
+# MITRE ATT&CK: tactic external_id -> technique external_id -> [subtechnique external_ids]
+mitre_attack:
+  TA0010:   # Exfiltration
+    T1048.003: []   # Exfiltration Over Alternative Protocol
+nist: ["SC-8(1)"]
+gdpr: ["IV.A.9", "V.D.2"]
+pci-dss: ["1.1.1", "1.2.1", "4.1"]
+hipaa: ["164.312.e.1", "164.312.e.2.i"]

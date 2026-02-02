@@ -1,0 +1,36 @@
+﻿# Example detection rule for zip import: one rule per file.
+# Pack these .yml/.json files into a .zip and POST to /api/v1/detection-rules/import
+
+name: Shubhali ochiq matnli (Cleartext) autentifikatsiya protokollari
+description: |
+  Tarmoqda Telnet, FTP yoki HTTP Basic Auth kabi shifrlanmagan protokollar orqali
+type: esql
+params: '{}'
+schedule_interval: 5m
+index:
+  - winlogbeat-*
+  - auditbeat-*
+  - filebeat-*
+  - packetbeat-*
+query_language: esql
+query: |
+  FROM winlogbeat-*, auditbeat-*, filebeat-*, packetbeat-*
+  | WHERE network.protocol IN ("telnet", "ftp", "http") 
+    OR destination.port IN (21, 23, 80)
+  | STATS 
+      usage_count = COUNT(*) 
+    BY source.ip, @timestamp
+  | SORT @timestamp DESC
+enabled: false
+tags:
+  - ia-8(4)
+severity: medium
+risk_score: 50
+# MITRE ATT&CK: tactic external_id -> technique external_id -> [subtechnique external_ids]
+mitre_attack:
+  TA0000:
+    T1040: []
+nist: ["IA-8(4)"]
+gdpr: ["II.E.2", "IV.A.9", "V.D.2"]
+pci-dss: ["8.1.1", "8.2.1", "8.5"]
+hipaa: ["164.312.a.2.i", "164.312.d"]

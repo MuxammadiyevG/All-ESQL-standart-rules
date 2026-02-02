@@ -1,0 +1,43 @@
+﻿# Example detection rule for zip import: one rule per file.
+# Pack these .yml/.json files into a .zip and POST to /api/v1/detection-rules/import
+
+name: Brute-force, Password Spraying va NTLM Relay tahlili
+description: |
+  Bitta IP dan turli xil foydalanuvchi nomlari bilan Login urinishlarini,
+type: esql
+params: '{}'
+schedule_interval: 5m
+index:
+  - winlogbeat-*
+query_language: esql
+query: |
+  FROM winlogbeat-*
+  | WHERE event.code IN ("4624", "4625")
+  | EVAL 
+      is_fail = CASE(event.code == "4625", 1, 0),
+      is_success = CASE(event.code == "4624", 1, 0),
+      is_ntlm = CASE(winlog.logon.authentication_package == "NTLM", 1, 0)
+  | STATS 
+      fail_count = SUM(is_fail), 
+      success_count = SUM(is_success),
+      unique_users = COUNT_DISTINCT(user.name),
+      ntlm_usage = SUM(is_ntlm),
+      latest_event = MAX(@timestamp)
+    BY source.ip, host.name
+  | WHERE (fail_count > 15 OR unique_users > 3) AND success_count > 0
+  | EVAL risk_level = CASE(ntlm_usage > 10, "CRITICAL (NTLM Relay)", "HIGH")
+  | SORT latest_event DESC
+  | LIMIT 20
+enabled: false
+tags:
+  - ac-2(j) - [ultimate version]
+severity: medium
+risk_score: 50
+# MITRE ATT&CK: tactic external_id -> technique external_id -> [subtechnique external_ids]
+mitre_attack:
+  TA0006:   # Credential Access
+    T1110: []   # Brute Force
+nist: ["AC-2(j) - [ULTIMATE VERSION]"]
+gdpr: ["II.A.1", "IV.A.9", "V.D.2"]
+pci-dss: ["7.1.1", "7.1.2", "8.1.1"]
+hipaa: ["164.312.a.1", "164.312.a.2.i"]

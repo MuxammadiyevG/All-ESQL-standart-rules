@@ -1,0 +1,37 @@
+﻿# Example detection rule for zip import: one rule per file.
+# Pack these .yml/.json files into a .zip and POST to /api/v1/detection-rules/import
+
+name: Katta hajmdagi ma'lumot uzatilishini aniqlash (Exfiltration)
+description: |
+  Ichki tarmoqdan tashqi (Internet) tarmoqqa bitta sessiya davomida
+type: esql
+params: '{}'
+schedule_interval: 5m
+index:
+  - winlogbeat-*
+  - auditbeat-*
+  - filebeat-*
+  - packetbeat-*
+query_language: esql
+query: |
+  FROM winlogbeat-*, auditbeat-*, filebeat-*, packetbeat-*
+  | WHERE NOT (destination.ip LIKE "10.*" OR destination.ip LIKE "192.168.*" OR destination.ip LIKE "127.0.0.1" OR destination.ip == "::1")
+    AND source.ip IS NOT NULL
+  | STATS 
+      event_count = COUNT(*)
+    BY source.ip, destination.ip, host.name
+  | WHERE event_count > 1000 
+  | SORT event_count DESC
+enabled: false
+tags:
+  - sc-7
+severity: medium
+risk_score: 50
+# MITRE ATT&CK: tactic external_id -> technique external_id -> [subtechnique external_ids]
+mitre_attack:
+  TA0000:
+    T1041: []
+nist: ["SC-7"]
+gdpr: ["IV.A.9", "V.D.2"]
+pci-dss: ["1.1.1", "1.2.1", "4.1"]
+hipaa: ["164.312.e.1", "164.312.e.2.i"]

@@ -1,0 +1,35 @@
+﻿# Example detection rule for zip import: one rule per file.
+# Pack these .yml/.json files into a .zip and POST to /api/v1/detection-rules/import
+
+name: AS-REP Roasting hujumi aniqlanishi
+description: |
+  "Do not require Kerberos preauthentication" sozlamasi yoqilgan foydalanuvchilar biletlarining
+type: esql
+params: '{}'
+schedule_interval: 5m
+index:
+  - winlogbeat-*
+query_language: esql
+query: |
+  FROM winlogbeat-*
+  | WHERE event.code == "4768" // A Kerberos authentication ticket (TGT) was requested
+    AND winlog.event_data.PreAuthType == "0" // Pre-authentication not required
+    AND winlog.event_data.Status == "0x0"   // Successful request
+    AND NOT user.name LIKE "*$"             // Kompyuter akkaunti emas
+  | STATS 
+      attempt_count = COUNT(*) 
+    BY source.ip, user.name, @timestamp
+  | SORT @timestamp DESC
+enabled: false
+tags:
+  - ia-2
+severity: medium
+risk_score: 50
+# MITRE ATT&CK: tactic external_id -> technique external_id -> [subtechnique external_ids]
+mitre_attack:
+  TA0006:   # Credential Access
+    T1558.004: []   # Steal or Forge Kerberos Tickets
+nist: ["IA-2"]
+gdpr: ["II.E.2", "IV.A.9", "V.D.2"]
+pci-dss: ["8.1.1", "8.2.1", "8.5"]
+hipaa: ["164.312.a.2.i", "164.312.d"]

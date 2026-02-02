@@ -1,0 +1,34 @@
+﻿# Example detection rule for zip import: one rule per file.
+# Pack these .yml/.json files into a .zip and POST to /api/v1/detection-rules/import
+
+name: Audit loglarining o'chirilishini aniqlash
+description: |
+  Windows yoki Linux tizimlarida xavfsizlik loglari o'chirilganligini aniqlaydi.
+type: esql
+params: '{}'
+schedule_interval: 5m
+index:
+  - winlogbeat-*
+  - auditbeat-*
+query_language: esql
+query: |
+  FROM winlogbeat-*, auditbeat-*
+  | WHERE event.code == "1102"                                   // Windows: Security Log o'chirildi
+    OR (event.action == "cleared-log")                           // Linux: Audit log o'chirildi
+    OR (event.action == "log-cleared")                           // Umumiy log o'chirish signali
+    OR (winlog.channel == "Security" AND event.code == "1100")   // EventLog xizmati to'xtatildi
+  | STATS event_count = COUNT(*) BY host.name, user.name, event.code, event.action, @timestamp
+  | SORT @timestamp DESC
+enabled: false
+tags:
+  - au-6(1)
+severity: medium
+risk_score: 50
+# MITRE ATT&CK: tactic external_id -> technique external_id -> [subtechnique external_ids]
+mitre_attack:
+  TA0005:   # Defense Evasion
+    T1070.001: []   # Indicator Removal
+nist: ["AU-6(1)"]
+gdpr: ["IV.A.9", "V.D.2", "VII.C.1"]
+pci-dss: ["10.1", "10.2.1", "10.3.1"]
+hipaa: ["164.312.b"]

@@ -1,0 +1,34 @@
+﻿# Example detection rule for zip import: one rule per file.
+# Pack these .yml/.json files into a .zip and POST to /api/v1/detection-rules/import
+
+name: Audit xavfsizlik siyosatining o'zgartirilishi
+description: |
+  Windows audit siyosatining ("auditpol.exe") o'zgartirilganini aniqlaydi.
+type: esql
+params: '{}'
+schedule_interval: 5m
+index:
+  - winlogbeat-*
+  - auditbeat-*
+query_language: esql
+query: |
+  FROM winlogbeat-*, auditbeat-*
+  | WHERE (process.name == "auditpol.exe" AND (process.command_line LIKE "*/set*" OR process.command_line LIKE "*/remove*"))
+    OR event.code == "4719" // System audit policy was changed
+  | STATS 
+      change_count = COUNT(*) 
+    BY host.name, user.name, process.name, process.command_line, @timestamp
+  | SORT @timestamp DESC
+enabled: false
+tags:
+  - au-10
+severity: medium
+risk_score: 50
+# MITRE ATT&CK: tactic external_id -> technique external_id -> [subtechnique external_ids]
+mitre_attack:
+  TA0005:   # Defense Evasion
+    T1562.002: []   # Impair Defenses
+nist: ["AU-10"]
+gdpr: ["IV.A.9", "V.D.2", "VII.C.1"]
+pci-dss: ["10.1", "10.2.1", "10.3.1"]
+hipaa: ["164.312.b"]

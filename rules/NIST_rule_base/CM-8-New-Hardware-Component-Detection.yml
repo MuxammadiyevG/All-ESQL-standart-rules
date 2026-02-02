@@ -1,0 +1,36 @@
+﻿# Example detection rule for zip import: one rule per file.
+# Pack these .yml/.json files into a .zip and POST to /api/v1/detection-rules/import
+
+name: Yangi tarmoq interfeysi yoki USB qurilma qo'shilishi
+description: |
+  Tizimga yangi tarmoq adapterlari yoki USB saqlash qurilmalari ulanganini aniqlaydi.
+type: esql
+params: '{}'
+schedule_interval: 5m
+index:
+  - winlogbeat-*
+query_language: esql
+query: |
+  FROM winlogbeat-*
+  | WHERE winlog.channel == "System"
+    AND (
+      (event.code == "20001" AND message LIKE "*PnpMgr*") // Driver installation
+      OR (event.code == "64" AND message LIKE "*NetworkProfile*") // New network connection
+    )
+  | STATS 
+      event_count = COUNT(*) 
+    BY host.name, user.name, event.code, @timestamp
+  | SORT @timestamp DESC
+enabled: false
+tags:
+  - cm-8
+severity: medium
+risk_score: 50
+# MITRE ATT&CK: tactic external_id -> technique external_id -> [subtechnique external_ids]
+mitre_attack:
+  TA0001:   # Initial Access
+    T1200: []   # Hardware Additions
+nist: ["CM-8"]
+gdpr: ["IV.A.9"]
+pci-dss: ["2.1.1", "2.2.2"]
+hipaa: ["164.308.a.1.ii.B"]

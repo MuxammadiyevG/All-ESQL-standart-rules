@@ -1,0 +1,34 @@
+﻿# Example detection rule for zip import: one rule per file.
+# Pack these .yml/.json files into a .zip and POST to /api/v1/detection-rules/import
+
+name: Ransomware harakati - ommaviy fayl nomini o'zgartirish
+description: |
+  Qisqa vaqt (1 daqiqa) ichida bitta foydalanuvchi yoki jarayon tomonidan
+type: esql
+params: '{}'
+schedule_interval: 5m
+index:
+  - auditbeat-*
+  - winlogbeat-*
+query_language: esql
+query: |
+  FROM auditbeat-*, winlogbeat-*
+  | WHERE event.type == "change" OR event.action == "renamed"
+  | STATS 
+      file_changes = COUNT(*) 
+    BY host.name, user.name, process.name, @timestamp
+  | WHERE file_changes > 50 // 1 ta event ichida ko'p fayl o'zgarishi (adjust threshold if needed)
+  | SORT file_changes DESC
+enabled: false
+tags:
+  - si-4
+severity: medium
+risk_score: 50
+# MITRE ATT&CK: tactic external_id -> technique external_id -> [subtechnique external_ids]
+mitre_attack:
+  TA0040:   # Impact
+    T1486: []   # Data Encrypted for Impact
+nist: ["SI-4"]
+gdpr: ["IV.A.9", "V.D.2"]
+pci-dss: ["11.2", "11.5"]
+hipaa: ["164.312.c.1", "164.312.c.2"]

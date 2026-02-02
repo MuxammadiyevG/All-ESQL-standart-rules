@@ -1,0 +1,42 @@
+﻿# Example detection rule for zip import: one rule per file.
+# Pack these .yml/.json files into a .zip and POST to /api/v1/detection-rules/import
+
+name: Web skanerlar faolligini aniqlash (Vulnerability Scanning)
+description: |
+  Ma'lum bo'lgan avtomatlashtirilgan kiber-asboblar (sqlmap, nikto, nmap, dirbuster)
+type: esql
+params: '{}'
+schedule_interval: 5m
+index:
+  - winlogbeat-*
+  - auditbeat-*
+  - filebeat-*
+  - packetbeat-*
+query_language: esql
+query: |
+  FROM winlogbeat-*, auditbeat-*, filebeat-*, packetbeat-*
+  | WHERE user_agent.original LIKE "*sqlmap*" 
+    OR user_agent.original LIKE "*nikto*" 
+    OR user_agent.original LIKE "*dirbuster*" 
+    OR user_agent.original LIKE "*nmap*"
+    OR user_agent.original LIKE "*masscan*"
+    OR url.path LIKE "*shell*"
+    OR message LIKE "*sqlmap*"
+  | STATS 
+      scan_count = COUNT(*) 
+    BY host.name, source.ip, @timestamp
+  | WHERE scan_count > 5
+  | SORT scan_count DESC
+enabled: false
+tags:
+  - sc-7
+severity: medium
+risk_score: 50
+# MITRE ATT&CK: tactic external_id -> technique external_id -> [subtechnique external_ids]
+mitre_attack:
+  TA0000:
+    T1595.002: []
+nist: ["SC-7"]
+gdpr: ["IV.A.9", "V.D.2"]
+pci-dss: ["1.1.1", "1.2.1", "4.1"]
+hipaa: ["164.312.e.1", "164.312.e.2.i"]

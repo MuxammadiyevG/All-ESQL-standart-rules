@@ -1,0 +1,37 @@
+﻿# Example detection rule for zip import: one rule per file.
+# Pack these .yml/.json files into a .zip and POST to /api/v1/detection-rules/import
+
+name: Nohandart portlarda shubhali protokol ishlatilishi
+description: |
+  HTTP, SSH yoki DNS kabi protokollarning ularga tegishli bo'lmagan portlarda
+type: esql
+params: '{}'
+schedule_interval: 5m
+index:
+  - winlogbeat-*
+  - auditbeat-*
+  - filebeat-*
+  - packetbeat-*
+query_language: esql
+query: |
+  FROM winlogbeat-*, auditbeat-*, filebeat-*, packetbeat-*
+  | WHERE (network.protocol == "ssh" AND destination.port != 22)
+    OR (network.protocol == "http" AND NOT destination.port IN (80, 8080, 8888))
+    OR (network.protocol == "dns" AND destination.port != 53)
+  | STATS 
+      mismatch_count = COUNT(*) 
+    BY host.name, source.ip, @timestamp
+  | SORT @timestamp DESC
+enabled: false
+tags:
+  - sc-7
+severity: medium
+risk_score: 50
+# MITRE ATT&CK: tactic external_id -> technique external_id -> [subtechnique external_ids]
+mitre_attack:
+  TA0011:   # Command and Control
+    T1571: []   # Non-Standard Port
+nist: ["SC-7"]
+gdpr: ["IV.A.9", "V.D.2"]
+pci-dss: ["1.1.1", "1.2.1", "4.1"]
+hipaa: ["164.312.e.1", "164.312.e.2.i"]

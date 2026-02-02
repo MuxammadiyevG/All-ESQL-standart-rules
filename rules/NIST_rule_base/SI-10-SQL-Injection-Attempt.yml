@@ -1,0 +1,41 @@
+﻿# Example detection rule for zip import: one rule per file.
+# Pack these .yml/.json files into a .zip and POST to /api/v1/detection-rules/import
+
+name: Mukammallashgan SQL Injection urinishlari (SQLi)
+description: |
+  HTTP so'rovlarida ma'lumotlar bazasiga hujum qilish uchun ishlatiladigan
+type: esql
+params: '{}'
+schedule_interval: 5m
+index:
+  - winlogbeat-*
+  - auditbeat-*
+  - filebeat-*
+  - packetbeat-*
+query_language: esql
+query: |
+  FROM winlogbeat-*, auditbeat-*, filebeat-*, packetbeat-*
+  | WHERE url.query LIKE "*SELECT*" 
+    OR url.query LIKE "*UNION*" 
+    OR url.query LIKE "*DROP*"
+    OR url.query LIKE "*' OR '1'='1*"
+    OR url.query LIKE "*information_schema*"
+    OR url.query LIKE "*pg_sleep*"
+    OR message LIKE "*SELECT*FROM*"
+  | STATS 
+      attack_count = COUNT(*) 
+    BY host.name, source.ip, @timestamp
+  | SORT @timestamp DESC
+enabled: false
+tags:
+  - si-10
+severity: medium
+risk_score: 50
+# MITRE ATT&CK: tactic external_id -> technique external_id -> [subtechnique external_ids]
+mitre_attack:
+  TA0000:
+    T1190: []
+nist: ["SI-10"]
+gdpr: ["IV.A.9", "V.D.2"]
+pci-dss: ["11.2", "11.5"]
+hipaa: ["164.312.c.1", "164.312.c.2"]

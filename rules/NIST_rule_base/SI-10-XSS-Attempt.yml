@@ -1,0 +1,40 @@
+﻿# Example detection rule for zip import: one rule per file.
+# Pack these .yml/.json files into a .zip and POST to /api/v1/detection-rules/import
+
+name: Cross-Site Scripting (XSS) urinishlarini aniqlash
+description: |
+  HTTP so'rovlarida HTML teglar yoki JavaScript kodlari (script, alert, onerror)
+type: esql
+params: '{}'
+schedule_interval: 5m
+index:
+  - winlogbeat-*
+  - auditbeat-*
+  - filebeat-*
+  - packetbeat-*
+query_language: esql
+query: |
+  FROM winlogbeat-*, auditbeat-*, filebeat-*, packetbeat-*
+  | WHERE url.query LIKE "*<script>*" 
+    OR url.query LIKE "*javascript:*" 
+    OR url.query LIKE "*alert(*" 
+    OR url.query LIKE "*onerror=*"
+    OR url.query LIKE "*%3Cscript%3E*"
+    OR message LIKE "*<script>*"
+  | STATS 
+      attack_count = COUNT(*) 
+    BY host.name, source.ip, @timestamp
+  | SORT @timestamp DESC
+enabled: false
+tags:
+  - si-10
+severity: medium
+risk_score: 50
+# MITRE ATT&CK: tactic external_id -> technique external_id -> [subtechnique external_ids]
+mitre_attack:
+  TA0000:
+    T1189: []
+nist: ["SI-10"]
+gdpr: ["IV.A.9", "V.D.2"]
+pci-dss: ["11.2", "11.5"]
+hipaa: ["164.312.c.1", "164.312.c.2"]

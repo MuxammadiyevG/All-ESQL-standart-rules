@@ -1,0 +1,35 @@
+﻿# Example detection rule for zip import: one rule per file.
+# Pack these .yml/.json files into a .zip and POST to /api/v1/detection-rules/import
+
+name: LOLBins (Living off the Land) orqali shubhali fayl yuklab olish
+description: |
+  Tizimning o'z asboblari (certutil.exe, bitsadmin.exe) orqali internetdan
+type: esql
+params: '{}'
+schedule_interval: 5m
+index:
+  - winlogbeat-*
+  - auditbeat-*
+query_language: esql
+query: |
+  FROM winlogbeat-*, auditbeat-*
+  | WHERE (process.name == "certutil.exe" AND process.command_line LIKE "*-urlcache*")
+    OR (process.name == "bitsadmin.exe" AND process.command_line LIKE "*/transfer*")
+    OR (process.name == "curl.exe" OR process.name == "wget.exe")
+  | STATS 
+      download_command = MAX(process.command_line) 
+    BY host.name, user.name, process.name, @timestamp
+  | SORT @timestamp DESC
+enabled: false
+tags:
+  - si-4
+severity: medium
+risk_score: 50
+# MITRE ATT&CK: tactic external_id -> technique external_id -> [subtechnique external_ids]
+mitre_attack:
+  TA0000:
+    T1105: []
+nist: ["SI-4"]
+gdpr: ["IV.A.9", "V.D.2"]
+pci-dss: ["11.2", "11.5"]
+hipaa: ["164.312.c.1", "164.312.c.2"]

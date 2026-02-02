@@ -1,0 +1,36 @@
+﻿# Example detection rule for zip import: one rule per file.
+# Pack these .yml/.json files into a .zip and POST to /api/v1/detection-rules/import
+
+name: Ruxsatsiz portlarning ochilishi (Port Binding)
+description: |
+  Tizimda kutilmagan dasturlar tomonidan muhim portlarning (SSH, RDP, DB)
+type: esql
+params: '{}'
+schedule_interval: 5m
+index:
+  - auditbeat-*
+  - winlogbeat-*
+query_language: esql
+query: |
+  FROM auditbeat-*, winlogbeat-*
+  | WHERE event.type == "start" OR event.code == "3" // Tarmoq ulanishi yoki xizmat boshlanishi
+  | WHERE destination.port IN (21, 22, 23, 445, 3389, 1433, 3306, 5432, 8080)
+    AND NOT user.name IN ("root", "SYSTEM", "network service", "LocalService")
+  | STATS 
+      process_info = MAX(process.command_line),
+      event_count = COUNT(*) 
+    BY host.name, user.name, process.name, @timestamp
+  | SORT @timestamp DESC
+enabled: false
+tags:
+  - cm-3(f)
+severity: medium
+risk_score: 50
+# MITRE ATT&CK: tactic external_id -> technique external_id -> [subtechnique external_ids]
+mitre_attack:
+  TA0011:   # Command and Control
+    T1571: []   # Non-Standard Port
+nist: ["CM-3(f)"]
+gdpr: ["IV.A.9"]
+pci-dss: ["2.1.1", "2.2.2"]
+hipaa: ["164.308.a.1.ii.B"]

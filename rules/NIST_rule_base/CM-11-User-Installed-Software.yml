@@ -1,0 +1,36 @@
+﻿# Example detection rule for zip import: one rule per file.
+# Pack these .yml/.json files into a .zip and POST to /api/v1/detection-rules/import
+
+name: Ruxsatsiz dasturiy ta'minot o'rnatilishi
+description: |
+  MSI paketlari yoki MSIExec orqali yangi dasturlar o'rnatilganini aniqlaydi.
+type: esql
+params: '{}'
+schedule_interval: 5m
+index:
+  - winlogbeat-*
+  - auditbeat-*
+query_language: esql
+query: |
+  FROM winlogbeat-*, auditbeat-*
+  | WHERE (process.name == "msiexec.exe" AND process.command_line LIKE "*/i*")
+    OR (event.code == "11" AND winlog.channel == "Application" AND message LIKE "*MsiInstaller*")
+  | STATS 
+      install_command = MAX(process.command_line),
+      package_name = MAX(winlog.event_data.PackageName),
+      event_count = COUNT(*)
+    BY host.name, user.name, process.name, @timestamp
+  | SORT @timestamp DESC
+enabled: false
+tags:
+  - cm-11
+severity: medium
+risk_score: 50
+# MITRE ATT&CK: tactic external_id -> technique external_id -> [subtechnique external_ids]
+mitre_attack:
+  TA0002:   # Execution
+    T1204.002: []   # User Execution
+nist: ["CM-11"]
+gdpr: ["IV.A.9"]
+pci-dss: ["2.1.1", "2.2.2"]
+hipaa: ["164.308.a.1.ii.B"]

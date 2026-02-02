@@ -1,0 +1,34 @@
+﻿# Example detection rule for zip import: one rule per file.
+# Pack these .yml/.json files into a .zip and POST to /api/v1/detection-rules/import
+
+name: Shubhali Linux Kernel moduli yuklanishi (LKM Rootkit)
+description: |
+  Linux tizimida "insmod" yoki "modprobe" buyruqlari orqali kutilmagan kernel modullari yuklanishini aniqlaydi.
+type: esql
+params: '{}'
+schedule_interval: 5m
+index:
+  - auditbeat-*
+query_language: esql
+query: |
+  FROM auditbeat-*
+  | WHERE process.name IN ("insmod", "modprobe", "rmmod")
+    OR (event.action == "executed" AND process.command_line LIKE "*modprobe*")
+  | STATS 
+      load_count = COUNT(*) 
+    BY host.name, user.name, process.command_line, @timestamp
+  | WHERE NOT user.name == "root" // Faqat root bo'lmagan foydalanuvchilar shubhali
+  | SORT @timestamp DESC
+enabled: false
+tags:
+  - si-4
+severity: medium
+risk_score: 50
+# MITRE ATT&CK: tactic external_id -> technique external_id -> [subtechnique external_ids]
+mitre_attack:
+  TA0000:
+    T1547.006: []
+nist: ["SI-4"]
+gdpr: ["IV.A.9", "V.D.2"]
+pci-dss: ["11.2", "11.5"]
+hipaa: ["164.312.c.1", "164.312.c.2"]

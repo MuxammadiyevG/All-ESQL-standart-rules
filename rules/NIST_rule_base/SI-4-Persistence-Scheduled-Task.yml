@@ -1,0 +1,34 @@
+﻿# Example detection rule for zip import: one rule per file.
+# Pack these .yml/.json files into a .zip and POST to /api/v1/detection-rules/import
+
+name: Shubhali Scheduled Task yaratilishi (Persistence)
+description: |
+  Tizimda "schtasks.exe" yoki PowerShell orqali yangi vazifa yaratilganini aniqlaydi.
+type: esql
+params: '{}'
+schedule_interval: 5m
+index:
+  - winlogbeat-*
+  - auditbeat-*
+query_language: esql
+query: |
+  FROM winlogbeat-*, auditbeat-*
+  | WHERE (process.name == "schtasks.exe" AND process.command_line LIKE "*/create*")
+    OR (process.name == "powershell.exe" AND process.command_line LIKE "*New-ScheduledTask*")
+  | STATS 
+      task_details = MAX(process.command_line) 
+    BY host.name, user.name, process.name, @timestamp
+  | SORT @timestamp DESC
+enabled: false
+tags:
+  - si-4
+severity: medium
+risk_score: 50
+# MITRE ATT&CK: tactic external_id -> technique external_id -> [subtechnique external_ids]
+mitre_attack:
+  TA0003:   # Persistence
+    T1053.005: []   # Scheduled Task/Job
+nist: ["SI-4"]
+gdpr: ["IV.A.9", "V.D.2"]
+pci-dss: ["11.2", "11.5"]
+hipaa: ["164.312.c.1", "164.312.c.2"]

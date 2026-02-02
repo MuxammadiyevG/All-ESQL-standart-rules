@@ -1,0 +1,36 @@
+﻿# Example detection rule for zip import: one rule per file.
+# Pack these .yml/.json files into a .zip and POST to /api/v1/detection-rules/import
+
+name: Shubhali Group Policy (GPO) o'zgarishi
+description: |
+  Active Directory'da Group Policy ob'ektlarining yaratilishi yoki o'zgartirilishini aniqlaydi.
+type: esql
+params: '{}'
+schedule_interval: 5m
+index:
+  - winlogbeat-*
+query_language: esql
+query: |
+  FROM winlogbeat-*
+  | WHERE event.code IN ("5136", "5137") // Directory Service object was modified/created
+    AND (
+      user.target.name LIKE "*groupPolicyContainer*"
+      OR user.target.name LIKE "*CN=Policies,CN=System*"
+    )
+  | STATS 
+      gpo_mods = COUNT(*) 
+    BY host.name, user.name, user.target.name, message, @timestamp
+  | SORT @timestamp DESC
+enabled: false
+tags:
+  - ac-16
+severity: medium
+risk_score: 50
+# MITRE ATT&CK: tactic external_id -> technique external_id -> [subtechnique external_ids]
+mitre_attack:
+  TA0000:
+    T1484.001: []
+nist: ["AC-16"]
+gdpr: ["II.A.1", "IV.A.9", "V.D.2"]
+pci-dss: ["7.1.1", "7.1.2", "8.1.1"]
+hipaa: ["164.312.a.1", "164.312.a.2.i"]

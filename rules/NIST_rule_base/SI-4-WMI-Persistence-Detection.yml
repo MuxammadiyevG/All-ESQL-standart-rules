@@ -1,0 +1,33 @@
+﻿# Example detection rule for zip import: one rule per file.
+# Pack these .yml/.json files into a .zip and POST to /api/v1/detection-rules/import
+
+name: WMI orqali barqarorlik (Persistence) yaratish
+description: |
+  WMI (Windows Management Instrumentation) Event Filter yoki Consumer yaratilishini aniqlaydi.
+type: esql
+params: '{}'
+schedule_interval: 5m
+index:
+  - winlogbeat-*
+query_language: esql
+query: |
+  FROM winlogbeat-*
+  | WHERE event.code IN ("19", "20", "21") // Sysmon WMI events
+  | EVAL wmi_operation = winlog.event_data.Operation, wmi_name = winlog.event_data.EventNamespace
+  | STATS 
+      wmi_event_count = COUNT(*) 
+    BY host.name, user.name, wmi_operation, wmi_name, @timestamp
+  | SORT @timestamp DESC
+enabled: false
+tags:
+  - si-4
+severity: medium
+risk_score: 50
+# MITRE ATT&CK: tactic external_id -> technique external_id -> [subtechnique external_ids]
+mitre_attack:
+  TA0000:
+    T1546.003: []
+nist: ["SI-4"]
+gdpr: ["IV.A.9", "V.D.2"]
+pci-dss: ["11.2", "11.5"]
+hipaa: ["164.312.c.1", "164.312.c.2"]

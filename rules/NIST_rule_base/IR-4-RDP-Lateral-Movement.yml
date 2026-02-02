@@ -1,0 +1,40 @@
+﻿# Example detection rule for zip import: one rule per file.
+# Pack these .yml/.json files into a .zip and POST to /api/v1/detection-rules/import
+
+name: RDP orqali Lateral Movement harakatlari (Logon Type 10)
+description: |
+  Masofaviy ish stoli (RDP) orqali tizimga kirishni aniqlaydi.
+type: esql
+params: '{}'
+schedule_interval: 5m
+index:
+  - winlogbeat-*
+query_language: esql
+query: |
+  FROM winlogbeat-*
+  | WHERE event.code == "4624" 
+    AND winlog.logon.type == "10" // Remote Interactive (RDP)
+    AND NOT (
+      source.ip LIKE "10.*.*.*" 
+      OR source.ip LIKE "192.168.*.*" 
+      OR source.ip LIKE "127.0.0.1" 
+      OR source.ip == "::1"
+    )
+  | STATS 
+      logon_count = COUNT(*),
+      target_host = MAX(host.name)
+    BY user.name, source.ip, @timestamp
+  | SORT @timestamp DESC
+enabled: false
+tags:
+  - ir-4
+severity: medium
+risk_score: 50
+# MITRE ATT&CK: tactic external_id -> technique external_id -> [subtechnique external_ids]
+mitre_attack:
+  TA0008:   # Lateral Movement
+    T1021.001: []   # Remote Services
+nist: ["IR-4"]
+gdpr: ["IV.A.9"]
+pci-dss: ["12.10.1"]
+hipaa: ["164.308.a.6.i"]

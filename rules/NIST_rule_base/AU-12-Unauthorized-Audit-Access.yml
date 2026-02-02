@@ -1,0 +1,35 @@
+﻿# Example detection rule for zip import: one rule per file.
+# Pack these .yml/.json files into a .zip and POST to /api/v1/detection-rules/import
+
+name: Audit fayllariga ruxsatsiz kirish urinishi
+description: |
+  Windows (.evtx) yoki Linux (/var/log/*) log fayllariga tizimga tegishli bo'lmagan
+type: esql
+params: '{}'
+schedule_interval: 5m
+index:
+  - winlogbeat-*
+  - auditbeat-*
+query_language: esql
+query: |
+  FROM winlogbeat-*, auditbeat-*
+  | WHERE (file.path LIKE "*.evtx" OR file.path LIKE "/var/log/*")
+    AND process.name IN ("cmd.exe", "powershell.exe", "python.exe", "python", "sh", "bash", "curl", "wget")
+    AND event.type IN ("access", "read")
+  | STATS 
+      access_count = COUNT(*) 
+    BY host.name, user.name, file.path, process.name, @timestamp
+  | SORT @timestamp DESC
+enabled: false
+tags:
+  - au-12
+severity: medium
+risk_score: 50
+# MITRE ATT&CK: tactic external_id -> technique external_id -> [subtechnique external_ids]
+mitre_attack:
+  TA0007:   # Discovery
+    T1083: []   # File and Directory Discovery
+nist: ["AU-12"]
+gdpr: ["IV.A.9", "V.D.2", "VII.C.1"]
+pci-dss: ["10.1", "10.2.1", "10.3.1"]
+hipaa: ["164.312.b"]

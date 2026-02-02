@@ -1,0 +1,38 @@
+﻿# Example detection rule for zip import: one rule per file.
+# Pack these .yml/.json files into a .zip and POST to /api/v1/detection-rules/import
+
+name: Shubhali Registry o'zgarishi (Persistence)
+description: |
+  Windows Registry'ning avtomatik yuklanish qismlarida (Run keys, Winlogon) o'zgarishlarni aniqlaydi.
+type: esql
+params: '{}'
+schedule_interval: 5m
+index:
+  - winlogbeat-*
+query_language: esql
+query: |
+  FROM winlogbeat-*
+  | WHERE event.code == "13" // Sysmon Event ID 13: RegistryValueSet
+    AND (
+      registry.path LIKE "*CurrentVersion*Run*" 
+      OR registry.path LIKE "*CurrentVersion*RunOnce*"
+      OR registry.path LIKE "*Winlogon*Shell*"
+    )
+  | EVAL reg_path = registry.path 
+  | STATS 
+      mod_count = COUNT(*) 
+    BY host.name, user.name, reg_path, @timestamp
+  | SORT @timestamp DESC
+enabled: false
+tags:
+  - si-4
+severity: medium
+risk_score: 50
+# MITRE ATT&CK: tactic external_id -> technique external_id -> [subtechnique external_ids]
+mitre_attack:
+  TA0000:
+    T1547.001: []
+nist: ["SI-4"]
+gdpr: ["IV.A.9", "V.D.2"]
+pci-dss: ["11.2", "11.5"]
+hipaa: ["164.312.c.1", "164.312.c.2"]

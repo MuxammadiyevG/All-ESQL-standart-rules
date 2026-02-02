@@ -1,0 +1,36 @@
+﻿# Example detection rule for zip import: one rule per file.
+# Pack these .yml/.json files into a .zip and POST to /api/v1/detection-rules/import
+
+name: AD Kerberos Delegation (Ishonchnoma) o'zgarishi
+description: |
+  Foydalanuvchi yoki kompyuter hisoblarida "Trusted for Delegation" atributi
+type: esql
+params: '{}'
+schedule_interval: 5m
+index:
+  - winlogbeat-*
+query_language: esql
+query: |
+  FROM winlogbeat-*
+  | WHERE event.code == "4738" OR event.code == "4742" // User or Computer account changed
+    AND (
+      message LIKE "*AllowedToDelegateTo*" 
+      OR user.target.name LIKE "*TrustedForDelegation*"
+    )
+  | STATS 
+      mod_count = COUNT(*) 
+    BY host.name, user.name, user.target.name, @timestamp
+  | SORT @timestamp DESC
+enabled: false
+tags:
+  - ac-6
+severity: medium
+risk_score: 50
+# MITRE ATT&CK: tactic external_id -> technique external_id -> [subtechnique external_ids]
+mitre_attack:
+  TA0006:   # Credential Access
+    T1558: []   # Steal or Forge Kerberos Tickets
+nist: ["AC-6"]
+gdpr: ["II.A.1", "IV.A.9", "V.D.2"]
+pci-dss: ["7.1.1", "7.1.2", "8.1.1"]
+hipaa: ["164.312.a.1", "164.312.a.2.i"]

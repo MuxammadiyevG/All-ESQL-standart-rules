@@ -1,0 +1,33 @@
+﻿# Example detection rule for zip import: one rule per file.
+# Pack these .yml/.json files into a .zip and POST to /api/v1/detection-rules/import
+
+name: AdminSDHolder ob'ekti manipulyatsiyasi
+description: |
+  Active Directory'da AdminSDHolder ob'ekti ruxsatnomalarining o'zgarishini aniqlaydi.
+type: esql
+params: '{}'
+schedule_interval: 5m
+index:
+  - winlogbeat-*
+query_language: esql
+query: |
+  FROM winlogbeat-*
+  | WHERE event.code == "5136"
+    AND user.target.name LIKE "*CN=AdminSDHolder,CN=System,DC=*"
+  | STATS 
+      tamper_count = COUNT(*) 
+    BY host.name, user.name, user.target.name, message, @timestamp
+  | SORT @timestamp DESC
+enabled: false
+tags:
+  - ac-6
+severity: medium
+risk_score: 50
+# MITRE ATT&CK: tactic external_id -> technique external_id -> [subtechnique external_ids]
+mitre_attack:
+  TA0003:   # Persistence
+    T1098: []   # Account Manipulation
+nist: ["AC-6"]
+gdpr: ["II.A.1", "IV.A.9", "V.D.2"]
+pci-dss: ["7.1.1", "7.1.2", "8.1.1"]
+hipaa: ["164.312.a.1", "164.312.a.2.i"]

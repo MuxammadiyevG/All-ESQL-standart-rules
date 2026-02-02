@@ -1,0 +1,43 @@
+﻿# Example detection rule for zip import: one rule per file.
+# Pack these .yml/.json files into a .zip and POST to /api/v1/detection-rules/import
+
+name: MFA (Ko'p faktorli autentifikatsiya) aylanib o'tilishini aniqlash
+description: |
+  Tizimga kirishda MFA ishlatilmagan holatlarni aniqlaydi.
+type: esql
+params: '{}'
+schedule_interval: 5m
+index:
+  - winlogbeat-*
+  - auditbeat-*
+  - filebeat-*
+  - packetbeat-*
+query_language: esql
+query: |
+  FROM winlogbeat-*, auditbeat-*, filebeat-*, packetbeat-*
+  | WHERE event.category == "authentication" 
+    AND event.outcome == "success"
+    AND (
+      // Cloud provayderlar uchun MFA holatini message scan orqali tekshirish
+      message LIKE "*mfa*notApplied*" 
+      OR message LIKE "*mfa*None*" 
+      OR message LIKE "*mfa*missing*"
+    )
+  | STATS 
+      logon_count = COUNT(*), 
+      last_logon = MAX(@timestamp) 
+    BY user.name, source.ip, @timestamp
+  | SORT @timestamp DESC
+enabled: false
+tags:
+  - ia-2(1)
+severity: medium
+risk_score: 50
+# MITRE ATT&CK: tactic external_id -> technique external_id -> [subtechnique external_ids]
+mitre_attack:
+  TA0006:   # Credential Access
+    T1556: []   # Modify Authentication Process
+nist: ["IA-2(1)"]
+gdpr: ["II.E.2", "IV.A.9", "V.D.2"]
+pci-dss: ["8.1.1", "8.2.1", "8.5"]
+hipaa: ["164.312.a.2.i", "164.312.d"]

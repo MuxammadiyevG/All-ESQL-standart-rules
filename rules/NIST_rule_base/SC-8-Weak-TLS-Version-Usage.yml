@@ -1,0 +1,35 @@
+﻿# Example detection rule for zip import: one rule per file.
+# Pack these .yml/.json files into a .zip and POST to /api/v1/detection-rules/import
+
+name: Eskirgan va zaif TLS protokollari ishlatilishi
+description: |
+  Tarmoqda SSLv3, TLS 1.0 yoki TLS 1.1 kabi eskirgan va zaif shifrlash protokollari
+type: esql
+params: '{}'
+schedule_interval: 5m
+index:
+  - winlogbeat-*
+  - auditbeat-*
+  - filebeat-*
+  - packetbeat-*
+query_language: esql
+query: |
+  FROM winlogbeat-*, auditbeat-*, filebeat-*, packetbeat-*
+  | WHERE tls.version IN ("1.0", "1.1") OR tls.version_protocol == "sslv3"
+  | STATS 
+      usage_count = COUNT(*) 
+    BY host.name, source.ip, tls.version, @timestamp
+  | SORT @timestamp DESC
+enabled: false
+tags:
+  - sc-8
+severity: medium
+risk_score: 50
+# MITRE ATT&CK: tactic external_id -> technique external_id -> [subtechnique external_ids]
+mitre_attack:
+  TA0006:   # Credential Access
+    T1557: []   # Adversary-in-the-Middle
+nist: ["SC-8"]
+gdpr: ["IV.A.9", "V.D.2"]
+pci-dss: ["1.1.1", "1.2.1", "4.1"]
+hipaa: ["164.312.e.1", "164.312.e.2.i"]

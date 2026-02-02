@@ -1,0 +1,37 @@
+﻿# Example detection rule for zip import: one rule per file.
+# Pack these .yml/.json files into a .zip and POST to /api/v1/detection-rules/import
+
+name: DMZ zonadan Ichki tarmoqqa ruxsatsiz ulanish (Zone Violation)
+description: |
+  DMZ (tashqi dunyoga ochiq) zonadagi serverlardan ichki maxfiy tarmoqqa
+type: esql
+params: '{}'
+schedule_interval: 5m
+index:
+  - winlogbeat-*
+  - auditbeat-*
+  - filebeat-*
+  - packetbeat-*
+query_language: esql
+query: |
+  FROM winlogbeat-*, auditbeat-*, filebeat-*, packetbeat-*
+  | WHERE source.ip LIKE "172.16.*.*" // DMZ zonasi
+    AND destination.ip LIKE "10.*" // Ichki zona
+    AND NOT destination.port IN (80, 443)
+  | STATS 
+      violation_count = COUNT(*) 
+    BY host.name, source.ip, @timestamp
+  | SORT @timestamp DESC
+enabled: false
+tags:
+  - sc-7
+severity: medium
+risk_score: 50
+# MITRE ATT&CK: tactic external_id -> technique external_id -> [subtechnique external_ids]
+mitre_attack:
+  TA0008:   # Lateral Movement
+    T1021: []   # Remote Services
+nist: ["SC-7"]
+gdpr: ["IV.A.9", "V.D.2"]
+pci-dss: ["1.1.1", "1.2.1", "4.1"]
+hipaa: ["164.312.e.1", "164.312.e.2.i"]

@@ -1,0 +1,34 @@
+﻿# Example detection rule for zip import: one rule per file.
+# Pack these .yml/.json files into a .zip and POST to /api/v1/detection-rules/import
+
+name: PrintSpooler orqali imtiyozlarni oshirish (Privilege Escalation)
+description: |
+  "spoolsv.exe" jarayoni (Print Spooler) kutilmagan farzand jarayonlarni (child processes)
+type: esql
+params: '{}'
+schedule_interval: 5m
+index:
+  - winlogbeat-*
+  - auditbeat-*
+query_language: esql
+query: |
+  FROM winlogbeat-*, auditbeat-*
+  | WHERE process.parent.name == "spoolsv.exe" 
+    AND NOT process.name IN ("conhost.exe", "WerFault.exe")
+  | STATS 
+      count() 
+    BY host.name, user.name, process.name, process.command_line, @timestamp
+  | SORT @timestamp DESC
+enabled: false
+tags:
+  - ac-6(10)
+severity: medium
+risk_score: 50
+# MITRE ATT&CK: tactic external_id -> technique external_id -> [subtechnique external_ids]
+mitre_attack:
+  TA0000:
+    T1068: []
+nist: ["AC-6(10)"]
+gdpr: ["II.A.1", "IV.A.9", "V.D.2"]
+pci-dss: ["7.1.1", "7.1.2", "8.1.1"]
+hipaa: ["164.312.a.1", "164.312.a.2.i"]

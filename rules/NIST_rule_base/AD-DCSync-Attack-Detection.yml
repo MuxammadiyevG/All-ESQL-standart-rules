@@ -1,0 +1,38 @@
+﻿# Example detection rule for zip import: one rule per file.
+# Pack these .yml/.json files into a .zip and POST to /api/v1/detection-rules/import
+
+name: Mukammal DCSync xuruji aniqlanishi (AD Hash Dumping)
+description: |
+  Ma'lumotlar bazasini replikatsiya qilish huquqi bilan bog'liq barcha GUIDlar tahlili orqali
+type: esql
+params: '{}'
+schedule_interval: 5m
+index:
+  - winlogbeat-*
+query_language: esql
+query: |
+  FROM winlogbeat-*
+  | WHERE event.code == "4662" 
+    AND (
+      user.target.name LIKE "*1131f6aa-9c07-11d1-f79f-00c04fc2dcd2*" // DS-Replication-Get-Changes
+      OR user.target.name LIKE "*1131f6ab-9c07-11d1-f79f-00c04fc2dcd2*" // DS-Replication-Get-Changes-All
+      OR user.target.name LIKE "*89e95b03-2049-11d1-9970-00c04fb984f9*" // DS-Replication-Get-Changes-In-Filtered-Set
+    )
+    AND NOT user.name LIKE "*$" // Domain Controller bo'lmagan shubhali akkauntlar
+  | STATS 
+      attack_count = COUNT(*) 
+    BY host.name, user.name, message, source.ip, @timestamp
+  | SORT @timestamp DESC
+enabled: false
+tags:
+  - ac-6 - [ultimate version]
+severity: medium
+risk_score: 50
+# MITRE ATT&CK: tactic external_id -> technique external_id -> [subtechnique external_ids]
+mitre_attack:
+  TA0006:   # Credential Access
+    T1003.006: []   # OS Credential Dumping
+nist: ["AC-6 - [ULTIMATE VERSION]"]
+gdpr: ["II.A.1", "IV.A.9", "V.D.2"]
+pci-dss: ["7.1.1", "7.1.2", "8.1.1"]
+hipaa: ["164.312.a.1", "164.312.a.2.i"]

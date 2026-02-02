@@ -1,0 +1,38 @@
+﻿# Example detection rule for zip import: one rule per file.
+# Pack these .yml/.json files into a .zip and POST to /api/v1/detection-rules/import
+
+name: AMSI Bypass (Anti-Malware Scan Interface) urinishi
+description: |
+  PowerShell seanslarida AMSI xavfsizlik mexanizmini chetlab o'tishga urinishlarni aniqlaydi.
+type: esql
+params: '{}'
+schedule_interval: 5m
+index:
+  - winlogbeat-*
+query_language: esql
+query: |
+  FROM winlogbeat-*
+  | WHERE event.code == "4104"
+    AND (
+      powershell.file.script_block_text LIKE "*amsiInitFailed*"
+      OR powershell.file.script_block_text LIKE "*amsiContext*"
+      OR powershell.file.script_block_text LIKE "*[Ref].Assembly.GetType*AmsiUtils*"
+      OR powershell.file.script_block_text LIKE "*NonPublic,Static*"
+    )
+  | STATS 
+      attempt_count = COUNT(*) 
+    BY host.name, user.name, @timestamp
+  | SORT @timestamp DESC
+enabled: false
+tags:
+  - si-4
+severity: medium
+risk_score: 50
+# MITRE ATT&CK: tactic external_id -> technique external_id -> [subtechnique external_ids]
+mitre_attack:
+  TA0005:   # Defense Evasion
+    T1562.001: []   # Impair Defenses
+nist: ["SI-4"]
+gdpr: ["IV.A.9", "V.D.2"]
+pci-dss: ["11.2", "11.5"]
+hipaa: ["164.312.c.1", "164.312.c.2"]

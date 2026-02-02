@@ -1,0 +1,34 @@
+﻿# Example detection rule for zip import: one rule per file.
+# Pack these .yml/.json files into a .zip and POST to /api/v1/detection-rules/import
+
+name: Process Hollowing (Xotira manipulyatsiyasi) aniqlanishi
+description: |
+  Bir jarayonning xotira qismi boshqa zararli kod bilan almashtirilganini (Process Hollowing) aniqlaydi.
+type: esql
+params: '{}'
+schedule_interval: 5m
+index:
+  - winlogbeat-*
+query_language: esql
+query: |
+  FROM winlogbeat-*
+  | WHERE event.code == "1" // Process Creation
+    AND process.executable LIKE "*Windows*System32*"
+    AND NOT (process.parent.name LIKE "*explorer*" OR process.parent.name LIKE "*services*" OR process.parent.name LIKE "*svchost*")
+  | STATS 
+      event_count = COUNT(*) 
+    BY host.name, user.name, process.name, process.parent.name, process.command_line, @timestamp
+  | SORT @timestamp DESC
+enabled: false
+tags:
+  - si-4
+severity: medium
+risk_score: 50
+# MITRE ATT&CK: tactic external_id -> technique external_id -> [subtechnique external_ids]
+mitre_attack:
+  TA0004:   # Privilege Escalation
+    T1055.012: []   # Process Injection
+nist: ["SI-4"]
+gdpr: ["IV.A.9", "V.D.2"]
+pci-dss: ["11.2", "11.5"]
+hipaa: ["164.312.c.1", "164.312.c.2"]
