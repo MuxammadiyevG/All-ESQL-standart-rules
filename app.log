@@ -3796,3 +3796,34 @@ elastic_transport.ConnectionTimeout: Connection timeout caused by: ReadTimeoutEr
 INFO:elastic_transport.transport:HEAD http://139.28.47.17:9908/ [status:200 duration:2.089s]
 WARNING:elastic_transport.node_pool:Node <Urllib3HttpNode(http://139.28.47.17:9908)> has been marked alive after a successful request
 INFO:werkzeug:10.174.195.238 - - [02/Feb/2026 20:31:24] "GET /api/stats HTTP/1.1" 200 -
+INFO:werkzeug: * Detected change in '/home/mikro/All-ESQL-standart-rules/config.py', reloading
+INFO:werkzeug: * Restarting with stat
+Traceback (most recent call last):
+  File "/home/mikro/All-ESQL-standart-rules/app.py", line 21, in <module>
+    es_client = ElasticsearchClient()
+  File "/home/mikro/All-ESQL-standart-rules/es_client.py", line 16, in __init__
+    self.client = Elasticsearch(
+                  ~~~~~~~~~~~~~^
+        [Config.ES_HOST],
+        ^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+        ssl_show_warn=False
+        ^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/mikro/All-ESQL-standart-rules/venv/lib/python3.14/site-packages/elasticsearch/_sync/client/__init__.py", line 249, in __init__
+    node_configs = client_node_configs(
+        hosts,
+    ...<12 lines>...
+        ssl_show_warn=ssl_show_warn,
+    )
+  File "/home/mikro/All-ESQL-standart-rules/venv/lib/python3.14/site-packages/elasticsearch/_sync/client/utils.py", line 125, in client_node_configs
+    node_configs = hosts_to_node_configs(hosts)
+  File "/home/mikro/All-ESQL-standart-rules/venv/lib/python3.14/site-packages/elasticsearch/_sync/client/utils.py", line 170, in hosts_to_node_configs
+    node_configs.append(url_to_node_config(host))
+                        ~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/home/mikro/All-ESQL-standart-rules/venv/lib/python3.14/site-packages/elastic_transport/client_utils.py", line 215, in url_to_node_config
+    raise ValueError(
+        "URL must include a 'scheme', 'host', and 'port' component (ie 'https://localhost:9200')"
+    )
+ValueError: URL must include a 'scheme', 'host', and 'port' component (ie 'https://localhost:9200')

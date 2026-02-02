@@ -13,9 +13,9 @@ class Config:
     PORT = 1212
     
     # Elasticsearch configuration
-    ES_HOST = 'http://139.28.47.17:9908/'
-    ES_USERNAME = 'elastic'
-    ES_PASSWORD = 'elasticpassword'
+    ES_HOST = ''
+    ES_USERNAME = ''
+    ES_PASSWORD = ''
     ES_TIMEOUT = 30
     ES_MAX_RETRIES = 3
     
