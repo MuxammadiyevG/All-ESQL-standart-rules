@@ -25,7 +25,7 @@ pip install -r requirements.txt
 Edit `config.py` to set your Elasticsearch credentials:
 
 ```python
-ES_HOST = 'http://139.28.47.17:9908/'
+ES_HOST = 'elastic_url'
 ES_USERNAME = 'elastic'
 ES_PASSWORD = 'elasticpassword'
 ```
